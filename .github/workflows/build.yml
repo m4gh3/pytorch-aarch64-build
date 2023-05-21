@@ -20,6 +20,10 @@ jobs:
         git clone --depth 1 -j16 --recursive \
         https://github.com/pytorch/pytorch.git -b v2.0.1
 
+    - name: Get dependencies
+      run: |
+        pip3 install -r pytorch/requirements.txt
+
     - name: Compile PyTorch
       run: |
         mkdir pytorch_build
