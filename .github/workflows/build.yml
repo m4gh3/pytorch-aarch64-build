@@ -11,13 +11,13 @@ jobs:
     - name: Get toolchain
       run: |
         sudo apt update
-        sudo apt install gcc-aarch64-linux-gnu \
+        sudo apt install -y gcc-aarch64-linux-gnu \
         g++-aarch64-linux-gnu python3 python3-pip \
         cmake ninja-build git
 
     - name: Get PyTorch
       run: |
-        git clone --depth 1 -j8 --recursive-submodules \
+        git clone --depth 1 -j16 --recursive \
         https://github.com/pytorch/pytorch.git -b v2.0.1
 
     - name: Compile PyTorch
