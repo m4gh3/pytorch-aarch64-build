@@ -51,6 +51,7 @@ jobs:
         ../pytorch
         ninja install
         cd ..
+        export PATH=$PATH:$PWD/pytorch_native_install
     - name: Compile PyTorch for ARM
       run: |
         mkdir pytorch_build
