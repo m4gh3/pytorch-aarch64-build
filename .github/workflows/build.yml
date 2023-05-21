@@ -24,7 +24,34 @@ jobs:
       run: |
         pip3 install -r pytorch/requirements.txt
 
-    - name: Compile PyTorch
+    - name: Compile PyTorch for Native
+      run: |
+        mkdir pytorch_native_build
+        mkdir pytorch_native_install
+        cd pytorch_native_build
+        cmake \
+        -DUSE_MKLDNN=ON \
+        -DBUILD_CUSTOM_PROTOBUF=OFF \
+        -DBUILD_SHARED_LIBS=ON \
+        -DUSE_FFMPEG=ON \
+        -DUSE_GFLAGS=ON \
+        -DUSE_GLOG=ON \
+        -DBUILD_BINARY=ON \
+        -DBUILD_PYTHON=OFF \
+        -DBUILD_TEST=OFF \
+        -DUSE_OPENCV=ON \
+        -DUSE_SYSTEM_NCCL=ON \
+        -DUSE_DISTRIBUTED=ON \
+        -DUSE_CUDA=OFF \
+        -DUSE_CUDNN=OFF \
+        -DBUILD_SHARED_LIBS=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=../pytorch_native_install \
+        -GNinja \
+        ../pytorch
+        ninja install
+        cd ..
+    - name: Compile PyTorch for ARM
       run: |
         mkdir pytorch_build
         mkdir pytorch_install
@@ -40,13 +67,9 @@ jobs:
         -DBUILD_BINARY=ON \
         -DBUILD_PYTHON=OFF \
         -DBUILD_TEST=OFF \
-        -DPYTHON_LIBRARY='' \
         -DUSE_OPENCV=ON \
         -DUSE_SYSTEM_NCCL=ON \
         -DUSE_DISTRIBUTED=ON \
-        -DNCCL_VERSION=$(pkg-config nccl --modversion) \
-        -DNCCL_VER_CODE=$(sed -n 's/^#define NCCL_VERSION_CODE\s*\(.*\).*/\1/p' /usr/include/nccl.h) \
-        -DTORCH_CUDA_ARCH_LIST="5.2;5.3;6.0;6.1;6.2;7.0;7.0+PTX;7.2;7.2+PTX;7.5;7.5+PTX;8.0;8.0+PTX;8.6;8.6+PTX" \
         -DUSE_CUDA=OFF \
         -DUSE_CUDNN=OFF \
         -DBUILD_SHARED_LIBS=ON \
