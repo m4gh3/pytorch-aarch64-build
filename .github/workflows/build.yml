@@ -1,0 +1,58 @@
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Get toolchain
+      run: |
+        sudo apt update
+        sudo apt install gcc-13-aarch64-linux-gnu \
+        g++-13-aarch64-linux-gnu python3 python3-pip \
+        cmake ninja-build git
+
+    - name: Get PyTorch
+      run: |
+        git clone --depth 1 -j8 --recursive-submodules \
+        https://github.com/pytorch/pytorch.git -b v2.0.1
+
+    - name: Compile PyTorch
+      run: |
+        mkdir pytorch_build
+        mkdir pytorch_install
+        cd pytorch_build
+        cmake \
+        -DCMAKE_TOOLCHAIN_FILE=../cmake_toolchain.cmake \
+        -DUSE_MKLDNN=ON \
+        -DBUILD_CUSTOM_PROTOBUF=OFF \
+        -DBUILD_SHARED_LIBS=ON \
+        -DUSE_FFMPEG=ON \
+        -DUSE_GFLAGS=ON \
+        -DUSE_GLOG=ON \
+        -DBUILD_BINARY=ON \
+        -DBUILD_PYTHON=OFF \
+        -DBUILD_TEST=OFF \
+        -DPYTHON_LIBRARY='' \
+        -DUSE_OPENCV=ON \
+        -DUSE_SYSTEM_NCCL=ON \
+        -DUSE_DISTRIBUTED=ON \
+        -DNCCL_VERSION=$(pkg-config nccl --modversion) \
+        -DNCCL_VER_CODE=$(sed -n 's/^#define NCCL_VERSION_CODE\s*\(.*\).*/\1/p' /usr/include/nccl.h) \
+        -DTORCH_CUDA_ARCH_LIST="5.2;5.3;6.0;6.1;6.2;7.0;7.0+PTX;7.2;7.2+PTX;7.5;7.5+PTX;8.0;8.0+PTX;8.6;8.6+PTX" \
+        -DUSE_CUDA=OFF \
+        -DUSE_CUDNN=OFF \
+        -DBUILD_SHARED_LIBS=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=../pytorch-install \
+        -GNinja \
+        ../pytorch
+        ninja install
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with:
+        name: pytorch
+        path: ../pytorch_install
