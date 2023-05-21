@@ -11,8 +11,8 @@ jobs:
     - name: Get toolchain
       run: |
         sudo apt update
-        sudo apt install gcc-13-aarch64-linux-gnu \
-        g++-13-aarch64-linux-gnu python3 python3-pip \
+        sudo apt install gcc-aarch64-linux-gnu \
+        g++-aarch64-linux-gnu python3 python3-pip \
         cmake ninja-build git
 
     - name: Get PyTorch
