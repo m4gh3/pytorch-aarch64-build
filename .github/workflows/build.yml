@@ -17,7 +17,7 @@ jobs:
 
     - name: Get PyTorch
       run: |
-        git clone --depth 1 -j16 --recursive \
+        git clone --depth 1 -j 16 --recursive \
         https://github.com/pytorch/pytorch.git -b v2.0.1
 
     - name: Get dependencies
@@ -49,7 +49,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=../pytorch_native_install \
         -GNinja \
         ../pytorch
-        ninja install
+        ninja install -j 16
         cd ..
         export PATH=$PATH:$PWD/pytorch_native_install
     - name: Compile PyTorch for ARM
@@ -78,7 +78,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=../pytorch-install \
         -GNinja \
         ../pytorch
-        ninja install
+        ninja build -j 16
     - name: Upload files
       uses: actions/upload-artifact@v3
       with:
