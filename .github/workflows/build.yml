@@ -24,34 +24,34 @@ jobs:
       run: |
         pip3 install -r pytorch/requirements.txt
 
-    - name: Compile PyTorch for Native
-      run: |
-        mkdir pytorch_native_build
-        mkdir pytorch_native_install
-        cd pytorch_native_build
-        cmake \
-        -DUSE_MKLDNN=ON \
-        -DBUILD_CUSTOM_PROTOBUF=OFF \
-        -DBUILD_SHARED_LIBS=ON \
-        -DUSE_FFMPEG=ON \
-        -DUSE_GFLAGS=ON \
-        -DUSE_GLOG=ON \
-        -DBUILD_BINARY=ON \
-        -DBUILD_PYTHON=OFF \
-        -DBUILD_TEST=OFF \
-        -DUSE_OPENCV=ON \
-        -DUSE_SYSTEM_NCCL=ON \
-        -DUSE_DISTRIBUTED=ON \
-        -DUSE_CUDA=OFF \
-        -DUSE_CUDNN=OFF \
-        -DBUILD_SHARED_LIBS=ON \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_INSTALL_PREFIX=../pytorch_native_install \
-        -GNinja \
-        ../pytorch
-        ninja install -j 16
-        cd ..
-        export PATH=$PATH:$PWD/pytorch_native_install
+        #- name: Compile PyTorch for Native
+        #  run: |
+        #    mkdir pytorch_native_build
+        #    mkdir pytorch_native_install
+        #    cd pytorch_native_build
+        #    cmake \
+        #    -DUSE_MKLDNN=ON \
+        #    -DBUILD_CUSTOM_PROTOBUF=OFF \
+        #    -DBUILD_SHARED_LIBS=ON \
+        #    -DUSE_FFMPEG=ON \
+        #    -DUSE_GFLAGS=ON \
+        #    -DUSE_GLOG=ON \
+        #    -DBUILD_BINARY=ON \
+        #    -DBUILD_PYTHON=OFF \
+        #    -DBUILD_TEST=OFF \
+        #    -DUSE_OPENCV=ON \
+        #    -DUSE_SYSTEM_NCCL=ON \
+        #    -DUSE_DISTRIBUTED=ON \
+        #    -DUSE_CUDA=OFF \
+        #    -DUSE_CUDNN=OFF \
+        #    -DBUILD_SHARED_LIBS=ON \
+        #    -DCMAKE_BUILD_TYPE=Release \
+        #    -DCMAKE_INSTALL_PREFIX=../pytorch_native_install \
+        #    -GNinja \
+        #    ../pytorch
+        #    ninja install -j 16
+        #    cd ..
+        #    export PATH=$PATH:$PWD/pytorch_native_install
     - name: Compile PyTorch for ARM
       run: |
         mkdir pytorch_build
