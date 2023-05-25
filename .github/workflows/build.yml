@@ -78,7 +78,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=../pytorch_install \
         -GNinja \
         ../pytorch
-        ninja build -j 16
+        ninja install -j 16
     - name: Upload files
       uses: actions/upload-artifact@v3
       with:
