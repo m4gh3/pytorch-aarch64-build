@@ -8,52 +8,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Get toolchain
+    - name: Get podman
       run: |
-        sudo apt update
-        sudo apt install -y gcc-aarch64-linux-gnu \
-        g++-aarch64-linux-gnu python3 python3-pip \
-        cmake ninja-build git mkalias
-
-    - name: Get PyTorch
-      run: |
-        git clone --depth 1 -j 16 --recursive \
-        https://github.com/pytorch/pytorch.git -b v2.0.1
-
-    - name: Get dependencies
-      run: |
-        pip3 install -r pytorch/requirements.txt
-
-        #- name: Compile PyTorch for Native
-        #  run: |
-        #    mkdir pytorch_native_build
-        #    mkdir pytorch_native_install
-        #    cd pytorch_native_build
-        #    cmake \
-        #    -DUSE_MKLDNN=ON \
-        #    -DBUILD_CUSTOM_PROTOBUF=OFF \
-        #    -DBUILD_SHARED_LIBS=ON \
-        #    -DUSE_FFMPEG=ON \
-        #    -DUSE_GFLAGS=ON \
-        #    -DUSE_GLOG=ON \
-        #    -DBUILD_BINARY=ON \
-        #    -DBUILD_PYTHON=OFF \
-        #    -DBUILD_TEST=OFF \
-        #    -DUSE_OPENCV=ON \
-        #    -DUSE_SYSTEM_NCCL=ON \
-        #    -DUSE_DISTRIBUTED=ON \
-        #    -DUSE_CUDA=OFF \
-        #    -DUSE_CUDNN=OFF \
-        #    -DBUILD_SHARED_LIBS=ON \
-        #    -DCMAKE_BUILD_TYPE=Release \
-        #    -DCMAKE_INSTALL_PREFIX=../pytorch_native_install \
-        #    -GNinja \
-        #    ../pytorch
-        #    ninja install -j 16
-        #    cd ..
-        #    export PATH=$PATH:$PWD/pytorch_native_install
+        sudo apt update \
+        sudo apt install -y podman 
     - name: Compile PyTorch for ARM
       run: |
+        podman run -v $(pwd):/root docker.io/m4gh3/aarch64-linux-gnu-gcc-builder /usr/bin/qemu-aarch64-static sh -c "
+        apt update
+        apt install -y python-is-python3 python3-pip git cmake ninja-build
+        cd /root
+        git clone --depth 1 -j 16 --recursive
+        https://github.com/pytorch/pytorch.git -b v2.0.1 
+        pip3 install -r pytorch/requirements.txt
         mkdir pytorch_build
         mkdir pytorch_install
         cd pytorch_build
@@ -78,7 +45,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=../pytorch_install \
         -GNinja \
         ../pytorch
-        ninja install -j 16
+        ninja install -j 16 "
     - name: Upload files
       uses: actions/upload-artifact@v3
       with:
