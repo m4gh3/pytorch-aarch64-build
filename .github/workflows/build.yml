@@ -10,7 +10,7 @@ jobs:
 
     - name: Get podman
       run: |
-        sudo apt update \
+        sudo apt update
         sudo apt install -y podman 
     - name: Compile PyTorch for ARM
       run: |
